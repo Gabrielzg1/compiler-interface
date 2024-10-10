@@ -1,0 +1,12 @@
+<div class="wrapper">
+    <div class="editor">
+        <po-code-editor p-height="750" p-theme="vs-dark" [(ngModel)]="editorContent"
+            (p-change)="onEditorChange($event)">
+        </po-code-editor>
+    </div>
+    <div class="right-section">
+        <po-button p-label="Executar" (p-click)="onClick()"> </po-button>
+        <label>Saída:</label>
+        <textarea class="terminal" [(ngModel)]="outputContent" rows="20" readonly></textarea>
+    </div>
+</div>
