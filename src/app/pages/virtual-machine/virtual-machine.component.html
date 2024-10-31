@@ -1,7 +1,49 @@
-<h1>Virtual Machine</h1>
-<div class="po-row">
-    <po-table class="po-md-3" [p-items]="instructions" [p-columns]="columns" [p-hide-select-all]="true"
-        p-hide-table-search="true" [p-hide-columns-manager]="true">
-    </po-table>
+<div class="main-container">
+    <!-- Tabela de Código de Máquina -->
+    <div class="table-container">
+        <h2>Código de Máquina</h2>
+        <div class="scroll-container">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Linha (i)</th>
+                        <th>Instrução</th>
+                        <th>Atributo 1</th>
+                        <th>Atributo 2</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let instruction of instructions" [class.highlight]="instruction.line === currentLine">
+                        <td>{{ instruction.line }}</td>
+                        <td>{{ instruction.instruction }}</td>
+                        <td>{{ instruction.attribute1 }}</td>
+                        <td>{{ instruction.attribute2 }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <po-button p-label="Executar" (click)="startExecution()" [p-disabled]="isExecuting"></po-button>
+        <po-button p-label="Parar Execução" (click)="stopExecution()"></po-button>
+    </div>
 
+    <!-- Tabela de Pilha de Dados -->
+    <div class="table-container">
+        <h2>Memória (Pilha)</h2>
+        <div class="scroll-container">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Endereço (s)</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let stackItem of stack">
+                        <td>{{ stackItem.address }}</td>
+                        <td>{{ stackItem.value }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
