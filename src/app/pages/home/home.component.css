@@ -15,8 +15,11 @@
     align-items: flex-start;
 }
 
-.right-section po-button {
-    margin-bottom: 10px;
+.buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    /* Espaçamento entre os botões */
 }
 
 .terminal {

@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { PoCodeEditorModule } from '@po-ui/ng-code-editor'; 
-import { PoButtonModule } from '@po-ui/ng-components';
+import { PoButtonModule, PoPageModule } from '@po-ui/ng-components';
 import axios from 'axios';
 
 @Component({
@@ -10,7 +11,8 @@ import axios from 'axios';
   imports: [
     PoCodeEditorModule,  
     PoButtonModule,
-    FormsModule
+    FormsModule,
+    PoPageModule
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
@@ -18,6 +20,8 @@ import axios from 'axios';
 export class HomeComponent {
   editorContent: string = ''; 
   outputContent: string = '';
+  vmDisabled: boolean = true;
+  constructor(private router: Router) {} // Injeção do Router para navegação
 
   // Método que envia o código para a API e atualiza a saída
   onClick() {
@@ -40,6 +44,9 @@ export class HomeComponent {
       console.error('Erro ao enviar o código para a API:', error);
       this.outputContent = 'Erro ao enviar o código para a API.';
     });
+  }
+  toVm(){
+    this.router.navigate(['/vm']);
   }
 
   // Método que atualiza o conteúdo do editor

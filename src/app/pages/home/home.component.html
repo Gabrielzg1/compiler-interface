@@ -1,12 +1,18 @@
-<div class="wrapper">
-    <div class="editor">
-        <po-code-editor p-height="750" p-theme="vs-dark" [(ngModel)]="editorContent"
-            (p-change)="onEditorChange($event)">
-        </po-code-editor>
+<po-page-default p-title="LPD">
+    <div class="wrapper">
+        <div class="editor">
+            <po-code-editor p-height="750" p-theme="vs-dark" [(ngModel)]="editorContent"
+                (p-change)="onEditorChange($event)">
+            </po-code-editor>
+        </div>
+        <div class="right-section">
+            <div class="buttons">
+                <po-button p-label="Executar" (p-click)="onClick()"> </po-button>
+                <po-button p-label="Ir para Máquina Virtual" (p-click)="toVm()" [p-disabled]="vmDisabled"> </po-button>
+            </div>
+
+            <label>Saída:</label>
+            <textarea class="terminal" [(ngModel)]="outputContent" rows="20" readonly></textarea>
+        </div>
     </div>
-    <div class="right-section">
-        <po-button p-label="Executar" (p-click)="onClick()"> </po-button>
-        <label>Saída:</label>
-        <textarea class="terminal" [(ngModel)]="outputContent" rows="20" readonly></textarea>
-    </div>
-</div>
+</po-page-default>

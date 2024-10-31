@@ -1,0 +1,23 @@
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 16px;
+    color: #333;
+    border-radius: 4px;
+}
+
+li:nth-child(even) {
+    background-color: #f1f1f1;
+}
+
+.half-width-table {
+    width: 50%;
+}
