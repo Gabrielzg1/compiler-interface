@@ -13,23 +13,21 @@ import { PoButtonModule, PoCheckboxModule, PoRadioGroupModule, PoTableModule } f
 export class VirtualMachineComponent {
   isExecuting = false;
   index: number = 0;
-  s: number = -1; // Representa o topo da pilha
-  stepByStep: boolean = false; // Variável controlada pelo checkbox
+  s: number = 0; 
+  stepByStep: boolean = false; 
 
   instructions: Array<{ line: number, instruction: string, attribute1: string | null, attribute2: string | null }> = [
-    { instruction: "LDC", attribute1: "100", attribute2: null }, // Carrega 10 na pilha
-    { instruction: "LDC", attribute1: "20", attribute2: null }, // Carrega 20 na pilha
-    { instruction: "LDC", attribute1: "11", attribute2: null }, // Carrega 10 na pilha
-    { instruction: "LDC", attribute1: "12", attribute2: null }, // Carrega 10 na pilha
-    { instruction: "LDC", attribute1: "13", attribute2: null }, // Carrega 10 na pilha
-    { instruction: "LDC", attribute1: "14", attribute2: null }, // Carrega 10 na pilha
-    { instruction: "STR", attribute1: "0", attribute2: null }, // Carrega 10 na pilha
-    
-    
+    { instruction: "LDC", attribute1: "100", attribute2: null }, 
+    { instruction: "LDC", attribute1: "20", attribute2: null }, 
+    { instruction: "LDC", attribute1: "11", attribute2: null }, 
+    { instruction: "LDC", attribute1: "12", attribute2: null }, 
+    { instruction: "LDC", attribute1: "13", attribute2: null }, 
+    { instruction: "LDC", attribute1: "14", attribute2: null }, 
+    { instruction: "STR", attribute1: "0", attribute2: null }, // retorno de funcao (posicao 0)
 ].map((instruction, index) => ({ line: index + 1, ...instruction }));
 
 
-  stack: Array<{ address: number, value: number }> = [];
+  stack: Array<{ address: number, value: number }> = [{ address: 0, value: 0 }];
 
   currentLine: number | null = null;
   intervalId: any;
@@ -166,7 +164,7 @@ export class VirtualMachineComponent {
       this.currentLine = this.instructions[this.index].line;
       this.index++;
       
-      const time = this.stepByStep ? 1000 : 10;
+      const time = this.stepByStep ? 1000 : 1;
       
       this.intervalId = setTimeout(() => this.executeNextInstruction(), time);
     } else {
@@ -183,8 +181,8 @@ export class VirtualMachineComponent {
   resetExecution() {
     clearTimeout(this.intervalId);
     this.index = 0;
-    this.s = -1;
-    this.stack = [];
+    this.s = 0;
+    this.stack = [{ address: 0, value: 0 }]; // Reserva a posição 0 para retorno de função
     this.currentLine = null;
   }
 
