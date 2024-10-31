@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PoTableColumn, PoButtonModule, PoRadioGroupModule, PoTableModule, PoCheckboxModule } from '@po-ui/ng-components';
+import { PoButtonModule, PoCheckboxModule, PoRadioGroupModule, PoTableModule } from '@po-ui/ng-components';
 
 @Component({
   selector: 'app-code-execution',
@@ -17,27 +17,15 @@ export class VirtualMachineComponent {
   stepByStep: boolean = false; // Variável controlada pelo checkbox
 
   instructions: Array<{ line: number, instruction: string, attribute1: string | null, attribute2: string | null }> = [
-    { instruction: "LDC", attribute1: "10", attribute2: null }, // Carrega 10 na pilha
+    { instruction: "LDC", attribute1: "100", attribute2: null }, // Carrega 10 na pilha
     { instruction: "LDC", attribute1: "20", attribute2: null }, // Carrega 20 na pilha
-    { instruction: "ADD", attribute1: null, attribute2: null }, // Soma 10 e 20 -> 30
-    { instruction: "LDC", attribute1: "5", attribute2: null },  // Carrega 5 na pilha
-    { instruction: "MULT", attribute1: null, attribute2: null }, // Multiplica 30 e 5 -> 150
-    { instruction: "LDC", attribute1: "3", attribute2: null },  // Carrega 3 na pilha
-    { instruction: "DIVI", attribute1: null, attribute2: null }, // Divide 150 por 3 -> 50
-    { instruction: "LDC", attribute1: "50", attribute2: null }, // Carrega 50 na pilha
-    { instruction: "CEQ", attribute1: null, attribute2: null },  // Compara se 50 == 50 -> 1
-    { instruction: "LDC", attribute1: "1", attribute2: null },  // Carrega 1 na pilha
-    { instruction: "NEG", attribute1: null, attribute2: null }, // Inverte o valor -> 0
-    { instruction: "LDC", attribute1: "1", attribute2: null },  // Carrega 1 na pilha
-    { instruction: "AND", attribute1: null, attribute2: null }, // AND entre 0 e 1 -> 0
-    { instruction: "LDC", attribute1: "1", attribute2: null },  // Carrega 1 na pilha
-    { instruction: "OR", attribute1: null, attribute2: null },  // OR entre 0 e 1 -> 1
-    { instruction: "LDC", attribute1: "100", attribute2: null }, // Carrega 100 na pilha
-    { instruction: "LDC", attribute1: "200", attribute2: null }, // Carrega 200 na pilha
-    { instruction: "CME", attribute1: null, attribute2: null },  // Compara 100 < 200 -> 1
-    { instruction: "LDC", attribute1: "2", attribute2: null },  // Carrega 2 na pilha
-    { instruction: "STR", attribute1: "2", attribute2: null },  // Armazena o topo da pilha na posição 2
-    { instruction: "LDV", attribute1: "2", attribute2: null },  // Carrega valor da posição 2 (2) na pilha
+    { instruction: "LDC", attribute1: "11", attribute2: null }, // Carrega 10 na pilha
+    { instruction: "LDC", attribute1: "12", attribute2: null }, // Carrega 10 na pilha
+    { instruction: "LDC", attribute1: "13", attribute2: null }, // Carrega 10 na pilha
+    { instruction: "LDC", attribute1: "14", attribute2: null }, // Carrega 10 na pilha
+    { instruction: "STR", attribute1: "0", attribute2: null }, // Carrega 10 na pilha
+    
+    
 ].map((instruction, index) => ({ line: index + 1, ...instruction }));
 
 
@@ -154,9 +142,7 @@ export class VirtualMachineComponent {
 
       case 'STR': // Armazenar valor
         const storeIndex = parseInt(param1 || "0", 10);
-        if (this.stack[storeIndex]) {
-          this.stack[storeIndex].value = this.stack[this.s].value;
-        }
+        this.stack[storeIndex].value = this.stack[this.s].value;
         this.s -= 1;
         break;
 
