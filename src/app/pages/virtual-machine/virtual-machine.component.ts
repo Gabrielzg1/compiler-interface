@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PoButtonModule, PoCheckboxModule, PoRadioGroupModule, PoTableModule } from '@po-ui/ng-components';
 
@@ -10,20 +10,44 @@ import { PoButtonModule, PoCheckboxModule, PoRadioGroupModule, PoTableModule } f
   templateUrl: './virtual-machine.component.html',
   styleUrls: ['./virtual-machine.component.css']
 })
-export class VirtualMachineComponent {
+export class VirtualMachineComponent  implements OnInit{
   isExecuting = false;
   index: number = 0;
   s: number = 0; 
   stepByStep: boolean = false; 
 
   instructions: Array<{ line: number, instruction: string, attribute1: string | null, attribute2: string | null }> = [
-    { instruction: "LDC", attribute1: "100", attribute2: null }, 
-    { instruction: "LDC", attribute1: "20", attribute2: null }, 
-    { instruction: "LDC", attribute1: "11", attribute2: null }, 
-    { instruction: "LDC", attribute1: "12", attribute2: null }, 
-    { instruction: "LDC", attribute1: "13", attribute2: null }, 
-    { instruction: "LDC", attribute1: "14", attribute2: null }, 
-    { instruction: "STR", attribute1: "0", attribute2: null }, // retorno de funcao (posicao 0)
+    { instruction: "L2", attribute1: "NULL", attribute2: null },// Rótulo L2
+    { instruction: "LDC", attribute1: "10", attribute2: null }, // Carrega 10 na pilha
+    { instruction: "LDC", attribute1: "20", attribute2: null }, // Carrega 20 na pilha
+    { instruction: "ADD", attribute1: null, attribute2: null }, // Soma 10 + 20 (resultado: 30)
+    { instruction: "STR", attribute1: "1", attribute2: null }, // Armazena o resultado (30) na posição 1
+
+    { instruction: "LDC", attribute1: "50", attribute2: null }, // Carrega 50 na pilha
+    { instruction: "LDV", attribute1: "1", attribute2: null },  // Carrega o valor da posição 1 (30)
+    { instruction: "SUB", attribute1: null, attribute2: null }, // Subtrai 50 - 30 (resultado: 20)
+    { instruction: "STR", attribute1: "2", attribute2: null },  // Armazena o resultado (20) na posição 2
+
+    { instruction: "LDC", attribute1: "2", attribute2: null },  // Carrega 2 na pilha
+    { instruction: "LDV", attribute1: "2", attribute2: null },  // Carrega o valor da posição 2 (20)
+    { instruction: "MULT", attribute1: null, attribute2: null },// Multiplica 20 * 2 (resultado: 40)
+    { instruction: "STR", attribute1: "2", attribute2: null },  // Armazena o resultado (40) na posição 3
+
+    { instruction: "LDC", attribute1: "100", attribute2: null },// Carrega 100 na pilha
+    { instruction: "LDV", attribute1: "3", attribute2: null },  // Carrega o valor da posição 3 (40)
+    { instruction: "CME", attribute1: null, attribute2: null }, // Compara se 40 < 100 (resultado: 1)
+    { instruction: "JMPF", attribute1: "L1", attribute2: null },// Se falso, pula para L1 (não pula)
+
+    { instruction: "LDC", attribute1: "1", attribute2: null },  // Carrega 1 na pilha
+    { instruction: "STR", attribute1: "4", attribute2: null },  // Armazena o resultado (1) na posição 4
+    
+
+    { instruction: "L1", attribute1: "NULL", attribute2: null },// Rótulo L1
+    { instruction: "JMP", attribute1: "L2", attribute2: null }, // Pula para L2
+    { instruction: "LDC", attribute1: "0", attribute2: null },  // Carrega 0 na pilha
+    { instruction: "STR", attribute1: "1", attribute2: null },  // Armazena o resultado (0) na posição 4
+
+    
 ].map((instruction, index) => ({ line: index + 1, ...instruction }));
 
 
@@ -32,8 +56,26 @@ export class VirtualMachineComponent {
   currentLine: number | null = null;
   intervalId: any;
 
-  // Executa a instrução atual
+  labelMap: Record<string, number> = {};
+
+  ngOnInit() {
+    this.mapLabels(); // Chama o mapeamento ao inicializar o componente
+  }
+  
+  // Mapeia os rótulos para os índices de instruções
+ // Mapeia os rótulos para os índices de instruções sem removê-los da lista
+mapLabels() {
+  this.instructions.forEach((inst, index) => {
+    if (inst.instruction.startsWith("L") && inst.attribute1 === "NULL") {
+      this.labelMap[inst.instruction] = index;
+    }
+  });
+}
+
   executeInstruction(instruction: string, param1: string | null, param2: string | null) {
+    if (instruction.startsWith("L") && param1 === "NULL") {
+      return;
+    }
     switch (instruction) {
       case 'LDC': // Carregar constante
         this.s += 1;
@@ -142,6 +184,23 @@ export class VirtualMachineComponent {
         const storeIndex = parseInt(param1 || "0", 10);
         this.stack[storeIndex].value = this.stack[this.s].value;
         this.s -= 1;
+        break;
+
+      case 'JMP': // Desviar sempre
+        const targetJMP = this.labelMap[param1 || ""];
+        if (targetJMP !== undefined) {
+          this.index = targetJMP; // Salta para a linha indicada pelo rótulo
+        }
+        break;
+  
+      case 'JMPF': // Desviar se falso
+        const targetJMPF = this.labelMap[param1 || ""];
+        if (targetJMPF !== undefined && this.stack[this.s].value === 0) {
+          this.index = targetJMPF; // Salta para a linha indicada pelo rótulo se o valor no topo for 0
+        } else {
+          this.index += 1; // Caso contrário, avança para a próxima instrução
+        }
+        this.s -= 1; // Reduz o ponteiro da pilha
         break;
 
       default:
