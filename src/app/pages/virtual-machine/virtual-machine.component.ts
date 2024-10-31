@@ -29,16 +29,16 @@ export class VirtualMachineComponent {
   intervalId: any;
 
   // Executa a instrução atual
-  executeInstruction(instruction: string, param: string | null) {
+  executeInstruction(instruction: string, param1: string | null, param2: string | null) {
     switch (instruction) {
       case 'LDC': // Carregar constante
         this.s += 1;
-        this.stack.push({ address: this.s, value: parseInt(param || "0", 10) });
+        this.stack.push({ address: this.s, value: parseInt(param1 || "0", 10) });
         break;
 
       case 'LDV': // Carregar valor da posição `n`
         this.s += 1;
-        const address = parseInt(param || "0", 10);
+        const address = parseInt(param1 || "0", 10);
         const value = this.stack.find(item => item.address === address)?.value || 0;
         this.stack.push({ address: this.s, value });
         break;
@@ -74,8 +74,8 @@ export class VirtualMachineComponent {
     this.resetExecution(); // Limpa os valores antes de iniciar uma nova execução
     this.intervalId = setInterval(() => {
       if (this.index < this.instructions.length) {
-        const { instruction, attribute1 } = this.instructions[this.index];
-        this.executeInstruction(instruction, attribute1);
+        const { instruction, attribute1, attribute2 } = this.instructions[this.index];
+        this.executeInstruction(instruction, attribute1, attribute2);
         this.currentLine = this.instructions[this.index].line;
         this.index++;
       } else {
