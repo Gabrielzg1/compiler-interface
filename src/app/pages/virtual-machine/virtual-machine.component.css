@@ -51,3 +51,23 @@ po-button {
     padding: 8px 12px;
     cursor: pointer;
 }
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* Espaçamento entre os itens de controle */
+    margin-top: 10px;
+}
+
+.step-checkbox {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+.highlight-stack {
+    background-color: #ddffdd;
+    /* Cor de destaque para a pilha */
+}

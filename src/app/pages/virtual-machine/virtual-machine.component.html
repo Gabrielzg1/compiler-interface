@@ -22,8 +22,15 @@
                 </tbody>
             </table>
         </div>
-        <po-button p-label="Executar" (click)="startExecution()" [p-disabled]="isExecuting"></po-button>
-        <po-button p-label="Parar Execução" (click)="stopExecution()"></po-button>
+
+        <!-- Botões e Checkbox para o modo de execução -->
+        <div class="controls">
+            <po-button p-label="Executar" (click)="startExecution()" [p-disabled]="isExecuting"></po-button>
+            <po-button p-label="Parar Execução" (click)="stopExecution()"></po-button>
+
+            <po-checkbox name="stepByStep" p-label="Passo a Passo" [(ngModel)]="stepByStep">
+            </po-checkbox>
+        </div>
     </div>
 
     <!-- Tabela de Pilha de Dados -->
@@ -38,7 +45,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let stackItem of stack">
+                    <tr *ngFor="let stackItem of stack" [ngClass]="{'highlight-stack': stackItem.address === s}">
                         <td>{{ stackItem.address }}</td>
                         <td>{{ stackItem.value }}</td>
                     </tr>
@@ -46,4 +53,5 @@
             </table>
         </div>
     </div>
+
 </div>
