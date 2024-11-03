@@ -17,18 +17,55 @@ export class VirtualMachineComponent  implements OnInit{
   stepByStep: boolean = false; 
 
   instructions: Array<{ line: number, instruction: string, attribute1: string | null, attribute2: string | null }> = [
-    { instruction: "RD", attribute1: null, attribute2: null },          // Lê um valor de entrada
-    { instruction: "STR", attribute1: "1", attribute2: null },          // Armazena o valor na variável A
-
-    { instruction: "LDV", attribute1: "1", attribute2: null },          // Carrega o valor de A na pilha
-    { instruction: "PRN", attribute1: null, attribute2: null },         // Imprime o valor de A
-
-    { instruction: "RD", attribute1: null, attribute2: null },          // Lê outro valor de entrada
-    { instruction: "STR", attribute1: "1", attribute2: null },          // Armazena o valor na variável X
-
-    { instruction: "LDV", attribute1: "1", attribute2: null },          // Carrega o valor de X na pilha
-    { instruction: "PRN", attribute1: null, attribute2: null }          // Imprime o valor de X
+    { instruction: "START", attribute1: null, attribute2: null },
+    { instruction: "ALLOC", attribute1: "0", attribute2: "1" },
+    { instruction: "ALLOC", attribute1: "1", attribute2: "3" },
+    { instruction: "JMP", attribute1: "L1", attribute2: null },
+    { instruction: "NULL", attribute1: "L2", attribute2: null },
+    { instruction: "ALLOC", attribute1: "4", attribute2: "4" },
+    { instruction: "JMP", attribute1: "L3", attribute2: null },
+    { instruction: "NULL", attribute1: "L4", attribute2: null },
+    { instruction: "RD", attribute1: null, attribute2: null },
+    { instruction: "STR", attribute1: "4", attribute2: null },
+    { instruction: "RD", attribute1: null, attribute2: null },
+    { instruction: "STR", attribute1: "5", attribute2: null },
+    { instruction: "CALL", attribute1: "L2", attribute2: null },
+    { instruction: "LDV", attribute1: "0", attribute2: null },
+    { instruction: "STR", attribute1: "6", attribute2: null },
+    { instruction: "LDV", attribute1: "6", attribute2: null },
+    { instruction: "PRN", attribute1: null, attribute2: null },
+    { instruction: "RETURN", attribute1: null, attribute2: null },
+    { instruction: "NULL", attribute1: "L5", attribute2: null },
+    { instruction: "ALLOC", attribute1: "8", attribute2: "1" },
+    { instruction: "RD", attribute1: null, attribute2: null },
+    { instruction: "STR", attribute1: "8", attribute2: null },
+    { instruction: "LDV", attribute1: "8", attribute2: null },
+    { instruction: "LDC", attribute1: "10", attribute2: null },
+    { instruction: "CME", attribute1: null, attribute2: null },
+    { instruction: "JMPF", attribute1: "L6", attribute2: null },
+    { instruction: "CALL", attribute1: "L4", attribute2: null },
+    { instruction: "NULL", attribute1: "L6", attribute2: null },
+    { instruction: "DALLOC", attribute1: "8", attribute2: "1" },
+    { instruction: "RETURN", attribute1: null, attribute2: null },
+    { instruction: "NULL", attribute1: "L3", attribute2: null },
+    { instruction: "CALL", attribute1: "L5", attribute2: null },
+    { instruction: "LDV", attribute1: "4", attribute2: null },
+    { instruction: "LDV", attribute1: "5", attribute2: null },
+    { instruction: "ADD", attribute1: null, attribute2: null },
+    { instruction: "STR", attribute1: "0", attribute2: null },
+    { instruction: "DALLOC", attribute1: "4", attribute2: "4" },
+    { instruction: "RETURN", attribute1: null, attribute2: null },
+    { instruction: "NULL", attribute1: "L1", attribute2: null },
+    { instruction: "CALL", attribute1: "L2", attribute2: null },
+    { instruction: "LDV", attribute1: "0", attribute2: null },
+    { instruction: "STR", attribute1: "3", attribute2: null },
+    { instruction: "LDV", attribute1: "3", attribute2: null },
+    { instruction: "PRN", attribute1: null, attribute2: null },
+    { instruction: "DALLOC", attribute1: "1", attribute2: "3" },
+    { instruction: "DALLOC", attribute1: "0", attribute2: "1" },
+    { instruction: "HLT", attribute1: null, attribute2: null }
 ].map((instruction, index) => ({ line: index + 1, ...instruction }));
+
 
 
   stack: Array<{ address: number, value: number }> = [{ address: 0, value: 0 }];
