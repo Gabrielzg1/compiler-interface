@@ -17,7 +17,6 @@ export class VirtualMachineComponent  implements OnInit{
   stepByStep: boolean = false; 
 
   instructions: Array<{ line: number, instruction: string, attribute1: string | null, attribute2: string | null }> = [
-<<<<<<< Updated upstream
     { instruction: "START", attribute1: null, attribute2: null },
     { instruction: "ALLOC", attribute1: "0", attribute2: "1" },
     { instruction: "ALLOC", attribute1: "1", attribute2: "3" },
@@ -65,35 +64,10 @@ export class VirtualMachineComponent  implements OnInit{
     { instruction: "DALLOC", attribute1: "1", attribute2: "3" },
     { instruction: "DALLOC", attribute1: "0", attribute2: "1" },
     { instruction: "HLT", attribute1: null, attribute2: null }
-=======
-    { instruction: "START", attribute1: "simple_test", attribute2: null },  // Início do programa
-    { instruction: "ALLOC", attribute1: "1", attribute2: "2" },             // Aloca memória para duas variáveis na posição 1 e 2
-
-    // Atribui valores a essas variáveis
-    { instruction: "LDC", attribute1: "5", attribute2: null },              // Carrega constante 5
-    { instruction: "STR", attribute1: "1", attribute2: null },              // Armazena 5 em posição 1
-    { instruction: "LDC", attribute1: "10", attribute2: null },             // Carrega constante 10
-    { instruction: "STR", attribute1: "2", attribute2: null },              // Armazena 10 em posição 2
-
-    // Imprime os valores para verificar a alocação
-    { instruction: "LDV", attribute1: "1", attribute2: null },              // Carrega valor da posição 1
-    { instruction: "PRN", attribute1: null, attribute2: null },             // Imprime valor (esperado: 5)
-    { instruction: "LDV", attribute1: "2", attribute2: null },              // Carrega valor da posição 2
-    { instruction: "PRN", attribute1: null, attribute2: null },             // Imprime valor (esperado: 10)
-
-    // Desaloca a memória
-    { instruction: "DALLOC", attribute1: "1", attribute2: "2" },            // Desaloca variáveis nas posições 1 e 2
-
-    { instruction: "HLT", attribute1: null, attribute2: null }              // Fim do programa
->>>>>>> Stashed changes
 ].map((instruction, index) => ({ line: index + 1, ...instruction }));
 
 
 
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
   stack: Array<{ address: number, value: number }> = [{ address: 0, value: 0 }];
 
   currentLine: number | null = null;
