@@ -17,6 +17,7 @@ export class VirtualMachineComponent  implements OnInit{
   stepByStep: boolean = false; 
 
   instructions: Array<{ line: number, instruction: string, attribute1: string | null, attribute2: string | null }> = [
+<<<<<<< Updated upstream
     { instruction: "START", attribute1: null, attribute2: null },
     { instruction: "ALLOC", attribute1: "0", attribute2: "1" },
     { instruction: "ALLOC", attribute1: "1", attribute2: "3" },
@@ -64,10 +65,35 @@ export class VirtualMachineComponent  implements OnInit{
     { instruction: "DALLOC", attribute1: "1", attribute2: "3" },
     { instruction: "DALLOC", attribute1: "0", attribute2: "1" },
     { instruction: "HLT", attribute1: null, attribute2: null }
+=======
+    { instruction: "START", attribute1: "simple_test", attribute2: null },  // Início do programa
+    { instruction: "ALLOC", attribute1: "1", attribute2: "2" },             // Aloca memória para duas variáveis na posição 1 e 2
+
+    // Atribui valores a essas variáveis
+    { instruction: "LDC", attribute1: "5", attribute2: null },              // Carrega constante 5
+    { instruction: "STR", attribute1: "1", attribute2: null },              // Armazena 5 em posição 1
+    { instruction: "LDC", attribute1: "10", attribute2: null },             // Carrega constante 10
+    { instruction: "STR", attribute1: "2", attribute2: null },              // Armazena 10 em posição 2
+
+    // Imprime os valores para verificar a alocação
+    { instruction: "LDV", attribute1: "1", attribute2: null },              // Carrega valor da posição 1
+    { instruction: "PRN", attribute1: null, attribute2: null },             // Imprime valor (esperado: 5)
+    { instruction: "LDV", attribute1: "2", attribute2: null },              // Carrega valor da posição 2
+    { instruction: "PRN", attribute1: null, attribute2: null },             // Imprime valor (esperado: 10)
+
+    // Desaloca a memória
+    { instruction: "DALLOC", attribute1: "1", attribute2: "2" },            // Desaloca variáveis nas posições 1 e 2
+
+    { instruction: "HLT", attribute1: null, attribute2: null }              // Fim do programa
+>>>>>>> Stashed changes
 ].map((instruction, index) => ({ line: index + 1, ...instruction }));
 
 
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
   stack: Array<{ address: number, value: number }> = [{ address: 0, value: 0 }];
 
   currentLine: number | null = null;
@@ -79,8 +105,6 @@ export class VirtualMachineComponent  implements OnInit{
     this.mapLabels(); // Chama o mapeamento ao inicializar o componente
   }
   
-  // Mapeia os rótulos para os índices de instruções
- // Mapeia os rótulos para os índices de instruções sem removê-los da lista
 mapLabels() {
   this.instructions.forEach((inst, index) => {
     if (inst.instruction.startsWith("L") && inst.attribute1 === "NULL") {
@@ -93,136 +117,177 @@ executeInstruction(instruction: string, param1: string | null, param2: string | 
   if (instruction.startsWith("L") && param1 === "NULL") {
       return;
   }
-  
+
   switch (instruction) {
-      case 'LDC': // Carregar constante
+      case 'START': 
+          console.log("Início do programa");
+          break;
+
+      case 'HLT': 
+          console.log("Fim do programa");
+          this.isExecuting = false;
+          clearTimeout(this.intervalId);
+          return;
+
+      case 'LDC': 
           this.s += 1;
           this.stack[this.s] = { address: this.s, value: parseInt(param1 || "0", 10) };
           break;
 
-      case 'LDV': // Carregar valor de endereço específico
+      case 'LDV': 
           this.s += 1;
           const n = parseInt(param1 || "0", 10);
           this.stack[this.s] = { address: this.s, value: this.stack[n]?.value || 0 };
           break;
 
-      case 'RD': // Leitura de entrada
+      case 'RD': 
           this.s += 1;
           const inputValue = parseInt(prompt("Digite o próximo valor de entrada:") || "0", 10);
           this.stack[this.s] = { address: this.s, value: inputValue };
           break;
 
-      case 'STR': // Armazenar valor
+      case 'STR': 
           const storeIndex = parseInt(param1 || "0", 10);
           this.stack[storeIndex] = { address: storeIndex, value: this.stack[this.s].value };
           this.s -= 1;
           break;
 
-      case 'PRN': // Impressão
+      case 'PRN': 
           console.log("Imprimindo valor:", this.stack[this.s].value);
           this.s -= 1;
           break;
 
-      case 'ADD': // Somar
-          if (this.s > 0) {
-              this.stack[this.s - 1].value += this.stack[this.s].value;
-              this.s -= 1;
+      case 'ALLOC': 
+        const mAlloc = parseInt(param1 || "0", 10);
+        const nAlloc = parseInt(param2 || "0", 10);
+          for (let k = 0; k <= nAlloc - 1; k++) {
+              // Avança o ponteiro de pilha e mapeia a variável para o índice `m + k`
+              this.s += 1;
+              this.stack[this.s] = { address: this.s, value: this.stack[mAlloc + k]?.value || 0 };
           }
           break;
-
-      case 'SUB': // Subtrair
-          if (this.s > 0) {
-              this.stack[this.s - 1].value -= this.stack[this.s].value;
-              this.s -= 1;
+      
+      case 'DALLOC': 
+          const mDalloc = parseInt(param1 || "0", 10);
+          const nDalloc = parseInt(param2 || "0", 10);
+          for (let k = nDalloc - 1; k >= 0; k--) {
+              this.stack[mDalloc + k].value = this.stack[this.s].value; 
+              this.s = this.s - 1; // Reduz o ponteiro após cada desalocação
           }
           break;
+      
 
-      case 'MULT': // Multiplicar
-          if (this.s > 0) {
-              this.stack[this.s - 1].value *= this.stack[this.s].value;
-              this.s -= 1;
-          }
-          break;
-
-      case 'DIVI': // Dividir
-          if (this.s > 0) {
-              this.stack[this.s - 1].value = Math.floor(this.stack[this.s - 1].value / this.stack[this.s].value);
-              this.s -= 1;
-          }
-          break;
-
-      case 'INV': // Inverter sinal
-          this.stack[this.s].value = -this.stack[this.s].value;
-          break;
-
-      case 'AND': // Conjunção lógica
-          if (this.s > 0) {
-              this.stack[this.s - 1].value = (this.stack[this.s - 1].value === 1 && this.stack[this.s].value === 1) ? 1 : 0;
-              this.s -= 1;
-          }
-          break;
-
-      case 'OR': // Disjunção lógica
-          if (this.s > 0) {
-              this.stack[this.s - 1].value = (this.stack[this.s - 1].value === 1 || this.stack[this.s].value === 1) ? 1 : 0;
-              this.s -= 1;
-          }
-          break;
-
-      case 'NEG': // Negação lógica
-          this.stack[this.s].value = 1 - this.stack[this.s].value;
-          break;
-
-      case 'CME': // Comparar menor
+      case 'CME':
           if (this.s > 0) {
               this.stack[this.s - 1].value = (this.stack[this.s - 1].value < this.stack[this.s].value) ? 1 : 0;
               this.s -= 1;
           }
           break;
 
-      case 'CMA': // Comparar maior
-          if (this.s > 0) {
-              this.stack[this.s - 1].value = (this.stack[this.s - 1].value > this.stack[this.s].value) ? 1 : 0;
-              this.s -= 1;
-          }
-          break;
-
-      case 'CEQ': // Comparar igual
-          if (this.s > 0) {
-              this.stack[this.s - 1].value = (this.stack[this.s - 1].value === this.stack[this.s].value) ? 1 : 0;
-              this.s -= 1;
-          }
-          break;
-
-      case 'CDIF': // Comparar desigual
-          if (this.s > 0) {
-              this.stack[this.s - 1].value = (this.stack[this.s - 1].value !== this.stack[this.s].value) ? 1 : 0;
-              this.s -= 1;
-          }
-          break;
-
-      case 'CMEQ': // Comparar menor ou igual
+      case 'CMEQ':
           if (this.s > 0) {
               this.stack[this.s - 1].value = (this.stack[this.s - 1].value <= this.stack[this.s].value) ? 1 : 0;
               this.s -= 1;
           }
           break;
 
-      case 'CMAQ': // Comparar maior ou igual
+      case 'CMAQ':
           if (this.s > 0) {
               this.stack[this.s - 1].value = (this.stack[this.s - 1].value >= this.stack[this.s].value) ? 1 : 0;
               this.s -= 1;
           }
           break;
 
-      case 'JMP': // Desvio incondicional
+      case 'CEQ':
+          if (this.s > 0) {
+              this.stack[this.s - 1].value = (this.stack[this.s - 1].value === this.stack[this.s].value) ? 1 : 0;
+              this.s -= 1;
+          }
+          break;
+
+      case 'CDIF':
+          if (this.s > 0) {
+              this.stack[this.s - 1].value = (this.stack[this.s - 1].value !== this.stack[this.s].value) ? 1 : 0;
+              this.s -= 1;
+          }
+          break;
+
+      case 'AND':
+          if (this.s > 0) {
+              this.stack[this.s - 1].value = (this.stack[this.s - 1].value === 1 && this.stack[this.s].value === 1) ? 1 : 0;
+              this.s -= 1;
+          }
+          break;
+
+      case 'OR':
+          if (this.s > 0) {
+              this.stack[this.s - 1].value = (this.stack[this.s - 1].value === 1 || this.stack[this.s].value === 1) ? 1 : 0;
+              this.s -= 1;
+          }
+          break;
+
+      case 'NEG':
+          if (this.s >= 0) {
+              this.stack[this.s].value = 1 - this.stack[this.s].value;
+          }
+          break;
+
+      case 'INV':
+          if (this.s >= 0) {
+              this.stack[this.s].value = -this.stack[this.s].value;
+          }
+          break;
+
+      case 'CALL': 
+          this.s += 1; 
+          this.stack[this.s] = { address: this.s, value: this.index + 1 };
+          const targetCALL = this.labelMap[param1 || ""];
+          if (targetCALL !== undefined) {
+              this.index = targetCALL;
+          }
+          break;
+
+      case 'RETURN': 
+          this.index = this.stack[this.s].value;
+          this.s -= 1; 
+          break;
+
+      case 'ADD': 
+          if (this.s > 0) {
+              this.stack[this.s - 1].value += this.stack[this.s].value;
+              this.s -= 1;
+          }
+          break;
+
+      case 'SUB': 
+          if (this.s > 0) {
+              this.stack[this.s - 1].value -= this.stack[this.s].value;
+              this.s -= 1;
+          }
+          break;
+
+      case 'MULT': 
+          if (this.s > 0) {
+              this.stack[this.s - 1].value *= this.stack[this.s].value;
+              this.s -= 1;
+          }
+          break;
+
+      case 'CMA': 
+          if (this.s > 0) {
+              this.stack[this.s - 1].value = (this.stack[this.s - 1].value > this.stack[this.s].value) ? 1 : 0;
+              this.s -= 1;
+          }
+          break;
+
+      case 'JMP': 
           const targetJMP = this.labelMap[param1 || ""];
           if (targetJMP !== undefined) {
               this.index = targetJMP;
           }
           break;
 
-      case 'JMPF': // Desvio condicional (se falso)
+      case 'JMPF': 
           const targetJMPF = this.labelMap[param1 || ""];
           if (targetJMPF !== undefined && this.stack[this.s].value === 0) {
               this.index = targetJMPF;
