@@ -1,0 +1,95 @@
+LDC k (Carregar constante):
+ S:=s + 1 ; M [s]: = k
+
+LDV n (Carregar valor):
+ S:=s+1 ; M[s]:=M[n]
+
+ADD (Somar):
+ M[s-1]:=M[s-1]+M[s]; s:=s-1
+
+SUB (Subtrair):
+ M[s-1]:=M[s-1]-M[s]; s:=s-1
+
+MULT (Multiplicar):
+ M[s-1]:=M[s-1]*M[s]; s:=s-1
+
+DIVI (Dividir):
+ M[s-1]:=M[s-1] div M[s]; s:=s-1
+
+INV (Inverter sinal):
+ M[s]:=-M[s]
+
+AND (Conjunção):
+ Se M [s-1]=1 e M[s]=1 então M[s-1]:=1 senão M[s-1]:=0; S:=s-1
+
+OR (Disjunção):
+ Se M[s-1]=1 ou M[s]=1 então M[s-1]:=1 senão M[s-1]:=0; s:=s-1
+
+NEG (Negação):
+ M[s]:=1-M[s]
+
+CME (Comparar menor):
+ Se M[s-1]<M[s] então M[s-1]:=1 senão M[s-1]:=0; s:=s-1
+
+CMA (Comparar maior):
+ Se M[s-1] >M[s] então M[s-1]:=1 senão M[s-1]:=0;s:=s-1
+
+CEQ (comparar igual):
+ Se M[s-1]=M[s] então M[s-1]:=1 senão M[s-1]:=0;s:=s-1
+
+CDIF (Comparar desigual):
+ Se M[s-1]  M[s] então M[s-1]:=1 senão M[s-1]:=0; s:=s-1
+
+CMEQ (Comparar menor ou igual)
+ Se M[s-1]  M[s] então M[s-1]:=1 senão M[s-1]:=0;s:=s-1
+
+CMAQ (Comparar maior ou igual):
+ Se M[s-1]  M[s] então M[s-1]:=1 senão M[s-1]:=0; s:=s-1
+
+STR n (Armazenar valor):
+ M[n]:=M[s]; s:=s-1
+
+JMP p (Desviar sempre):
+ i:=p
+
+JMPF p (Desviar se falso):
+ Se M[s]=0 então i:=p senão i:=i+1;
+ S:=s-1
+
+NULL (Nada): não faz nada
+
+
+RD (Leitura):
+ S:=s+1; M[s]:= “próximo valor de entrada”.
+
+PRN (Impressão):
+ “Imprimir M[s]”; s:=s-1
+
+*** leia e escreva sao acompanhados de STD e LDV respectivamente
+
+START (Iniciar programa principal):
+ S:=-1
+
+HLT (Parar):
+ “Pára a execução da MVD”
+
+ALLOC m,n (Alocar memória):
+ Para k:=0 até n-1 faça
+ {s:=s+1;M[s]:=M[m+k]}
+
+DALLOC m,n (Desalocar memória):
+ Para k:=n-1 até 0 faça
+ {M[m+k]:=M[s];s:=s-1}
+
+CALL p (Chamar procedimento ou função):
+ S:=s+1; 
+ M[s]:=i+1;
+ i:=p
+
+RETURN (Retornar de procedimento):
+ i:=M[s];
+ s:=s-1
+
+
+** retorno de funcao é o return normal 
+e o valor salvo fica no endereço 0
