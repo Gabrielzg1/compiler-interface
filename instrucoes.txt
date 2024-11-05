@@ -91,5 +91,3 @@ RETURN (Retornar de procedimento e funcao):
  s:=s-1
 
 
-** retorno de funcao é o return normal 
-e o valor salvo fica no endereço 0
