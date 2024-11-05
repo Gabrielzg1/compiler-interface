@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PoButtonModule, PoCheckboxModule, PoRadioGroupModule, PoTableModule } from '@po-ui/ng-components';
+import axios from 'axios';
+
 
 @Component({
   selector: 'app-code-execution',
@@ -77,6 +79,10 @@ export class VirtualMachineComponent  implements OnInit{
 
   ngOnInit() {
     this.mapLabels(); // Chama o mapeamento ao inicializar o componente
+    axios.get('http://127.0.0.1:5000/get_obj')
+    .then(response => {
+      console.log(response.data);
+    })
   }
   
 mapLabels() {
