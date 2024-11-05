@@ -86,7 +86,7 @@ CALL p (Chamar procedimento ou função):
  M[s]:=i+1;
  i:=p
 
-RETURN (Retornar de procedimento):
+RETURN (Retornar de procedimento e funcao):
  i:=M[s];
  s:=s-1
 
