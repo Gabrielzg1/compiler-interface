@@ -310,11 +310,16 @@ export class VirtualMachineComponent implements OnInit {
         const { instruction, attribute1, attribute2, line } =
           currentInstruction;
         this.currentLine = line;
-        this.executeInstruction(instruction, attribute1, attribute2);
-      }
 
-      // Avança o índice para a próxima instrução
-      // this.index++;
+        // Executa a instrução
+        this.executeInstruction(instruction, attribute1, attribute2);
+
+        // Verifica se a instrução atual é 'HLT' para parar imediatamente
+        if (instruction === 'HLT') {
+          this.finishExecution();
+          return;
+        }
+      }
 
       // Define o tempo de execução com base no modo step-by-step
       const delay = this.stepByStep ? 1000 : 1;
