@@ -58,20 +58,21 @@ JMPF p (Desviar se falso):
 
 NULL (Nada): não faz nada
 
+START (Iniciar programa principal):
+ S:=-1
 
-RD (Leitura):
+ HLT (Parar):
+ “Pára a execução da MVD”
+
+ RD (Leitura):
  S:=s+1; M[s]:= “próximo valor de entrada”.
 
 PRN (Impressão):
  “Imprimir M[s]”; s:=s-1
-
 *** leia e escreva sao acompanhados de STD e LDV respectivamente
 
-START (Iniciar programa principal):
- S:=-1
+--------> ATE AQUI ESTA REVISADO 
 
-HLT (Parar):
- “Pára a execução da MVD”
 
 ALLOC m,n (Alocar memória):
  Para k:=0 até n-1 faça

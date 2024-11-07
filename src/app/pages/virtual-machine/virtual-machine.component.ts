@@ -35,19 +35,54 @@ export class VirtualMachineComponent implements OnInit {
     attribute1: string | null;
     attribute2: string | null;
   }> = [
-    { instruction: 'START', attribute1: null, attribute2: null }, // Início do programa
-
-    // Aloca espaço para variáveis a, b e o resultado
-    { instruction: 'ALLOC', attribute1: '0', attribute2: '4' }, // Aloca três posições para a, b e resultado
-    { instruction: 'LDC', attribute1: '2', attribute2: null }, // Carrega constante 0 para a
-    { instruction: 'LDC', attribute1: '5', attribute2: null },
-    { instruction: 'DIVI', attribute1: null, attribute2: null }, // Armazena a em a
-
-    // Outras instruções podem ser adicionadas aqui...
-
-    { instruction: 'DALLOC', attribute1: '0', attribute2: '3' },
+    { instruction: 'START', attribute1: null, attribute2: null },
+    { instruction: 'ALLOC', attribute1: '0', attribute2: '1' },
+    { instruction: 'ALLOC', attribute1: '1', attribute2: '3' },
+    { instruction: 'JMP', attribute1: 'L1', attribute2: null },
+    { instruction: 'NULL', attribute1: 'L2', attribute2: null },
+    { instruction: 'ALLOC', attribute1: '4', attribute2: '4' },
+    { instruction: 'JMP', attribute1: 'L3', attribute2: null },
+    { instruction: 'NULL', attribute1: 'L4', attribute2: null },
+    { instruction: 'RD', attribute1: null, attribute2: null },
+    { instruction: 'STR', attribute1: '4', attribute2: null },
+    { instruction: 'RD', attribute1: null, attribute2: null },
+    { instruction: 'STR', attribute1: '5', attribute2: null },
+    { instruction: 'CALL', attribute1: 'L2', attribute2: null },
+    { instruction: 'LDV', attribute1: '0', attribute2: null },
+    { instruction: 'STR', attribute1: '6', attribute2: null },
+    { instruction: 'LDV', attribute1: '6', attribute2: null },
+    { instruction: 'PRN', attribute1: null, attribute2: null },
+    { instruction: 'RETURN', attribute1: null, attribute2: null },
+    { instruction: 'NULL', attribute1: 'L5', attribute2: null },
+    { instruction: 'ALLOC', attribute1: '8', attribute2: '1' },
+    { instruction: 'RD', attribute1: null, attribute2: null },
+    { instruction: 'STR', attribute1: '8', attribute2: null },
+    { instruction: 'LDV', attribute1: '8', attribute2: null },
+    { instruction: 'LDC', attribute1: '10', attribute2: null },
+    { instruction: 'CME', attribute1: null, attribute2: null },
+    { instruction: 'JMPF', attribute1: 'L6', attribute2: null },
+    { instruction: 'CALL', attribute1: 'L4', attribute2: null },
+    { instruction: 'NULL', attribute1: 'L6', attribute2: null },
+    { instruction: 'DALLOC', attribute1: '8', attribute2: '1' },
+    { instruction: 'RETURN', attribute1: null, attribute2: null },
+    { instruction: 'NULL', attribute1: 'L3', attribute2: null },
+    { instruction: 'CALL', attribute1: 'L5', attribute2: null },
+    { instruction: 'LDV', attribute1: '4', attribute2: null },
+    { instruction: 'LDV', attribute1: '5', attribute2: null },
+    { instruction: 'ADD', attribute1: null, attribute2: null },
+    { instruction: 'STR', attribute1: '0', attribute2: null },
+    { instruction: 'DALLOC', attribute1: '4', attribute2: '4' },
+    { instruction: 'RETURN', attribute1: null, attribute2: null },
+    { instruction: 'NULL', attribute1: 'L1', attribute2: null },
+    { instruction: 'CALL', attribute1: 'L2', attribute2: null },
+    { instruction: 'LDV', attribute1: '0', attribute2: null },
+    { instruction: 'STR', attribute1: '3', attribute2: null },
+    { instruction: 'LDV', attribute1: '3', attribute2: null },
+    { instruction: 'PRN', attribute1: null, attribute2: null },
+    { instruction: 'DALLOC', attribute1: '1', attribute2: '3' },
+    { instruction: 'DALLOC', attribute1: '0', attribute2: '1' },
     { instruction: 'HLT', attribute1: null, attribute2: null },
-  ].map((instruction, index) => ({ line: index + 1, ...instruction }));
+  ].map((instruction, index) => ({ line: index, ...instruction }));
 
   stack: Array<number> = [];
 
@@ -58,9 +93,9 @@ export class VirtualMachineComponent implements OnInit {
 
   ngOnInit() {
     this.mapLabels(); // Chama o mapeamento ao inicializar o componente
-    axios.get('http://127.0.0.1:5000/get_obj').then((response) => {
+    /*axios.get('http://127.0.0.1:5000/get_obj').then((response) => {
       console.log(response.data);
-    });
+    }); */
   }
 
   mapLabels() {
@@ -78,6 +113,7 @@ export class VirtualMachineComponent implements OnInit {
     param1: string | null,
     param2: string | null
   ) {
+    let shouldIncrement = true; // Flag para controle do incremento
     switch (instruction) {
       case 'START':
         console.log('Início do programa');
@@ -206,39 +242,28 @@ export class VirtualMachineComponent implements OnInit {
         }
         break;
 
-      case 'CALL': // Chamar procedimento ou função
+      case 'CALL':
         this.s += 1;
         this.stack[this.s] = this.index + 1;
-        const targetCALL = this.labelMap[param1 || ''];
-        if (targetCALL !== undefined) {
-          this.index = targetCALL - 1; // Ajusta o índice para a instrução de destino
-        } else {
-          console.error(`Rótulo não encontrado: ${param1}`);
-        }
+        this.index = this.labelMap[param1 || ''];
+        shouldIncrement = false;
         break;
 
-      case 'RETURN': // Retornar de procedimento ou função
+      case 'RETURN':
         this.index = this.stack[this.s];
         this.s -= 1;
+        shouldIncrement = false;
         break;
 
-      case 'JMP': // Desviar sempre
-        const targetJMP = this.labelMap[param1 || ''];
-        if (targetJMP !== undefined) {
-          this.index = targetJMP - 1; // Ajusta o índice para a instrução de destino
-        } else {
-          console.error(`Rótulo não encontrado: ${param1}`);
-        }
+      case 'JMP':
+        this.index = this.labelMap[param1 || ''];
+        shouldIncrement = false;
         break;
 
-      case 'JMPF': // Desviar se falso
-        const targetJMPF = this.labelMap[param1 || ''];
+      case 'JMPF':
         if (this.stack[this.s] === 0) {
-          if (targetJMPF !== undefined) {
-            this.index = targetJMPF - 1; // Ajusta o índice para a instrução de destino
-          } else {
-            console.error(`Rótulo não encontrado: ${param1}`);
-          }
+          this.index = this.labelMap[param1 || ''];
+          shouldIncrement = false;
         }
         this.s -= 1;
         break;
@@ -263,6 +288,10 @@ export class VirtualMachineComponent implements OnInit {
       default:
         console.log(`Instrução desconhecida: ${instruction}`);
     }
+    // Incrementa o índice se não houver desvio
+    if (shouldIncrement) {
+      this.index++;
+    }
   }
 
   // Método de execução usando `setTimeout` para evitar congestionamento com `setInterval`
@@ -285,7 +314,7 @@ export class VirtualMachineComponent implements OnInit {
       }
 
       // Avança o índice para a próxima instrução
-      this.index++;
+      // this.index++;
 
       // Define o tempo de execução com base no modo step-by-step
       const delay = this.stepByStep ? 1000 : 1;
