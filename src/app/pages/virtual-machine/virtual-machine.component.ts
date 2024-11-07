@@ -2,10 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  PoButtonModule,
-  PoCheckboxModule,
-  PoRadioGroupModule,
-  PoTableModule,
+    PoButtonModule,
+    PoCheckboxModule,
+    PoRadioGroupModule,
+    PoTableModule,
 } from '@po-ui/ng-components';
 import axios from 'axios';
 
@@ -34,77 +34,30 @@ export class VirtualMachineComponent implements OnInit {
     instruction: string;
     attribute1: string | null;
     attribute2: string | null;
-  }> = [
-    { instruction: 'START', attribute1: null, attribute2: null },
-    { instruction: 'ALLOC', attribute1: '0', attribute2: '1' },
-    { instruction: 'ALLOC', attribute1: '1', attribute2: '3' },
-    { instruction: 'JMP', attribute1: 'L1', attribute2: null },
-    { instruction: 'NULL', attribute1: 'L2', attribute2: null },
-    { instruction: 'ALLOC', attribute1: '4', attribute2: '4' },
-    { instruction: 'JMP', attribute1: 'L3', attribute2: null },
-    { instruction: 'NULL', attribute1: 'L4', attribute2: null },
-    { instruction: 'RD', attribute1: null, attribute2: null },
-    { instruction: 'STR', attribute1: '4', attribute2: null },
-    { instruction: 'RD', attribute1: null, attribute2: null },
-    { instruction: 'STR', attribute1: '5', attribute2: null },
-    { instruction: 'CALL', attribute1: 'L2', attribute2: null },
-    { instruction: 'LDV', attribute1: '0', attribute2: null },
-    { instruction: 'STR', attribute1: '6', attribute2: null },
-    { instruction: 'LDV', attribute1: '6', attribute2: null },
-    { instruction: 'PRN', attribute1: null, attribute2: null },
-    { instruction: 'RETURN', attribute1: null, attribute2: null },
-    { instruction: 'NULL', attribute1: 'L5', attribute2: null },
-    { instruction: 'ALLOC', attribute1: '8', attribute2: '1' },
-    { instruction: 'RD', attribute1: null, attribute2: null },
-    { instruction: 'STR', attribute1: '8', attribute2: null },
-    { instruction: 'LDV', attribute1: '8', attribute2: null },
-    { instruction: 'LDC', attribute1: '10', attribute2: null },
-    { instruction: 'CME', attribute1: null, attribute2: null },
-    { instruction: 'JMPF', attribute1: 'L6', attribute2: null },
-    { instruction: 'CALL', attribute1: 'L4', attribute2: null },
-    { instruction: 'NULL', attribute1: 'L6', attribute2: null },
-    { instruction: 'DALLOC', attribute1: '8', attribute2: '1' },
-    { instruction: 'RETURN', attribute1: null, attribute2: null },
-    { instruction: 'NULL', attribute1: 'L3', attribute2: null },
-    { instruction: 'CALL', attribute1: 'L5', attribute2: null },
-    { instruction: 'LDV', attribute1: '4', attribute2: null },
-    { instruction: 'LDV', attribute1: '5', attribute2: null },
-    { instruction: 'ADD', attribute1: null, attribute2: null },
-    { instruction: 'STR', attribute1: '0', attribute2: null },
-    { instruction: 'DALLOC', attribute1: '4', attribute2: '4' },
-    { instruction: 'RETURN', attribute1: null, attribute2: null },
-    { instruction: 'NULL', attribute1: 'L1', attribute2: null },
-    { instruction: 'CALL', attribute1: 'L2', attribute2: null },
-    { instruction: 'LDV', attribute1: '0', attribute2: null },
-    { instruction: 'STR', attribute1: '3', attribute2: null },
-    { instruction: 'LDV', attribute1: '3', attribute2: null },
-    { instruction: 'PRN', attribute1: null, attribute2: null },
-    { instruction: 'DALLOC', attribute1: '1', attribute2: '3' },
-    { instruction: 'DALLOC', attribute1: '0', attribute2: '1' },
-    { instruction: 'HLT', attribute1: null, attribute2: null },
-  ].map((instruction, index) => ({ line: index, ...instruction }));
+    label?: string | null;
+  }> = [];
 
   stack: Array<number> = [];
-
   currentLine: number | null = null;
   intervalId: any;
-
   labelMap: Record<string, number> = {};
 
   ngOnInit() {
-    this.mapLabels(); // Chama o mapeamento ao inicializar o componente
-    /*axios.get('http://127.0.0.1:5000/get_obj').then((response) => {
-      console.log(response.data);
-    }); */
+    // Carrega as instruções da API e realiza o mapeamento das labels
+    axios.get('http://127.0.0.1:5000/get_obj').then((response) => {
+      this.instructions = response.data.instructions;
+      this.mapLabels(); // Mapeia as labels depois de carregar as instruções
+      console.log('Instruções carregadas:', this.instructions);
+    });
   }
 
   mapLabels() {
+    // Percorre as instruções e mapeia os labels (instruções `NULL` com `label` presente)
     this.instructions.forEach((inst, index) => {
-      if (inst.instruction == 'NULL' && inst.attribute1) {
-        this.labelMap[inst.attribute1] = index;
+      if (inst.label) {
+        this.labelMap[inst.label] = index;
       }
     });
-
     console.log('Label Map:', this.labelMap);
   }
 
@@ -160,12 +113,10 @@ export class VirtualMachineComponent implements OnInit {
         break;
 
       case 'DIVI': // Dividir
-        // Evita divisão por zero
         this.stack[this.s - 1] = Math.floor(
           this.stack[this.s - 1] / this.stack[this.s]
         );
         this.s -= 1;
-
         break;
 
       case 'INV': // Inverter sinal
@@ -288,13 +239,11 @@ export class VirtualMachineComponent implements OnInit {
       default:
         console.log(`Instrução desconhecida: ${instruction}`);
     }
-    // Incrementa o índice se não houver desvio
     if (shouldIncrement) {
       this.index++;
     }
   }
 
-  // Método de execução usando `setTimeout` para evitar congestionamento com `setInterval`
   startExecution() {
     this.isExecuting = true;
     this.resetExecution();
@@ -302,7 +251,6 @@ export class VirtualMachineComponent implements OnInit {
   }
 
   executeNextInstruction() {
-    // Verifica se o índice atual está dentro do limite do array de instruções
     if (this.index < this.instructions.length) {
       const currentInstruction = this.instructions[this.index];
 
@@ -311,21 +259,18 @@ export class VirtualMachineComponent implements OnInit {
           currentInstruction;
         this.currentLine = line;
 
-        // Executa a instrução
         this.executeInstruction(instruction, attribute1, attribute2);
 
-        // Verifica se a instrução atual é 'HLT' para parar imediatamente
         if (instruction === 'HLT') {
           this.finishExecution();
           return;
         }
       }
 
-      // Define o tempo de execução com base no modo step-by-step
       const delay = this.stepByStep ? 1000 : 1;
       this.intervalId = setTimeout(() => this.executeNextInstruction(), delay);
     } else {
-      this.finishExecution(); // Finaliza a execução caso todas instruções tenham sido processadas
+      this.finishExecution();
     }
   }
 
