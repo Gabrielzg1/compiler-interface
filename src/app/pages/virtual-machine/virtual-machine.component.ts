@@ -39,6 +39,9 @@ export class VirtualMachineComponent implements OnInit {
 
     // Aloca espaço para variáveis a, b e o resultado
     { instruction: 'ALLOC', attribute1: '0', attribute2: '4' }, // Aloca três posições para a, b e resultado
+    { instruction: 'LDC', attribute1: '2', attribute2: null }, // Carrega constante 0 para a
+    { instruction: 'LDC', attribute1: '5', attribute2: null },
+    { instruction: 'DIVI', attribute1: null, attribute2: null }, // Armazena a em a
 
     // Outras instruções podem ser adicionadas aqui...
 
@@ -121,15 +124,12 @@ export class VirtualMachineComponent implements OnInit {
         break;
 
       case 'DIVI': // Dividir
-        if (this.stack[this.s] !== 0) {
-          // Evita divisão por zero
-          this.stack[this.s - 1] = Math.floor(
-            this.stack[this.s - 1] / this.stack[this.s]
-          );
-          this.s -= 1;
-        } else {
-          console.error('Erro: Divisão por zero.');
-        }
+        // Evita divisão por zero
+        this.stack[this.s - 1] = Math.floor(
+          this.stack[this.s - 1] / this.stack[this.s]
+        );
+        this.s -= 1;
+
         break;
 
       case 'INV': // Inverter sinal
