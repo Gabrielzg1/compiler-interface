@@ -1,12 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import {
-    PoButtonModule,
-    PoCheckboxModule,
-    PoRadioGroupModule,
-    PoTableModule,
+  PoButtonModule,
+  PoCheckboxModule,
+  PoRadioGroupModule,
+  PoTableModule,
+  PoLoadingModule,
 } from '@po-ui/ng-components';
+
 import axios from 'axios';
 
 @Component({
@@ -19,11 +22,14 @@ import axios from 'axios';
     PoCheckboxModule,
     FormsModule,
     CommonModule,
+    PoLoadingModule,
   ],
   templateUrl: './virtual-machine.component.html',
   styleUrls: ['./virtual-machine.component.css'],
 })
 export class VirtualMachineComponent implements OnInit {
+  constructor(private router: Router) {}
+  isLoading: boolean = false;
   isExecuting = false;
   index: number = 0;
   s: number = -1;
@@ -41,13 +47,16 @@ export class VirtualMachineComponent implements OnInit {
   currentLine: number | null = null;
   intervalId: any;
   labelMap: Record<string, number> = {};
+  output: string = '';
 
   ngOnInit() {
     // Carrega as instruções da API e realiza o mapeamento das labels
+    this.isLoading = true;
     axios.get('http://127.0.0.1:5000/get_obj').then((response) => {
       this.instructions = response.data.instructions;
       this.mapLabels(); // Mapeia as labels depois de carregar as instruções
       console.log('Instruções carregadas:', this.instructions);
+      this.isLoading = false;
     });
   }
 
@@ -229,7 +238,7 @@ export class VirtualMachineComponent implements OnInit {
         break;
 
       case 'PRN': // Impressão
-        console.log('Imprimindo valor:', this.stack[this.s]);
+        this.output += this.stack[this.s] + '\n';
         this.s -= 1;
         break;
 
@@ -267,7 +276,7 @@ export class VirtualMachineComponent implements OnInit {
         }
       }
 
-      const delay = this.stepByStep ? 1000 : 1;
+      const delay = this.stepByStep ? 2000 : 1;
       this.intervalId = setTimeout(() => this.executeNextInstruction(), delay);
     } else {
       this.finishExecution();
@@ -286,6 +295,7 @@ export class VirtualMachineComponent implements OnInit {
     this.s = -1;
     this.stack = [];
     this.currentLine = null;
+    this.output = '';
   }
 
   finishExecution() {
@@ -296,5 +306,8 @@ export class VirtualMachineComponent implements OnInit {
 
   ngOnDestroy() {
     clearTimeout(this.intervalId);
+  }
+  navigateHome(): void {
+    this.router.navigate(['/home']);
   }
 }

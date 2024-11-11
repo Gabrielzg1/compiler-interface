@@ -1,3 +1,7 @@
+<div class="back-button-container">
+    <po-button p-label="Voltar" p-icon="po-icon-arrow-left" (p-click)="navigateHome()"></po-button>
+</div>
+
 <div class="main-container">
     <!-- Tabela de Código de Máquina -->
     <div class="table-container">
@@ -27,9 +31,7 @@
         <div class="controls">
             <po-button p-label="Executar" (click)="startExecution()" [p-disabled]="isExecuting"></po-button>
             <po-button p-label="Parar Execução" (click)="stopExecution()"></po-button>
-
-            <po-checkbox name="stepByStep" p-label="Passo a Passo" [(ngModel)]="stepByStep">
-            </po-checkbox>
+            <po-checkbox name="stepByStep" p-label="Passo a Passo" [(ngModel)]="stepByStep"></po-checkbox>
         </div>
     </div>
 
@@ -53,4 +55,11 @@
             </table>
         </div>
     </div>
+
+    <!-- Nova coluna para Saída -->
+    <div class="table-container output-container">
+        <textarea class="terminal" [(ngModel)]="output" rows="20" readonly></textarea>
+    </div>
 </div>
+
+<po-loading-overlay [p-screen-lock]="true" p-text="Compilando" p-size="xl" [hidden]="!isLoading"></po-loading-overlay>

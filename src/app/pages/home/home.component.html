@@ -1,4 +1,5 @@
 <po-page-default p-title="LPD">
+
     <div class="wrapper">
         <div class="editor">
             <po-code-editor p-height="750" p-theme="vs-dark" [(ngModel)]="editorContent"
@@ -8,7 +9,8 @@
         <div class="right-section">
             <div class="buttons">
                 <po-button p-label="Executar" (p-click)="onClick()"> </po-button>
-                <po-button p-label="Ir para Máquina Virtual" (p-click)="toVm()" [p-disabled]="vmDisabled"> </po-button>
+                <po-button p-label="Ir para Máquina Virtual" (p-click)="toVm()" [p-disabled]="vmDisabled">
+                </po-button>
             </div>
 
             <label>Saída:</label>
@@ -16,3 +18,4 @@
         </div>
     </div>
 </po-page-default>
+<po-loading-overlay [p-screen-lock]="true" p-text="Compilando" p-size="xl" [hidden]="!isLoading">
