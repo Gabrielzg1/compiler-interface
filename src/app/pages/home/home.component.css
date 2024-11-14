@@ -34,3 +34,18 @@
     resize: none;
     box-sizing: border-box;
 }
+
+/* Esconda o input original */
+input[type="file"] {
+    display: none;
+}
+
+/* Estilo do botão de upload */
+.file-upload-label {
+    cursor: pointer;
+}
+
+/* Po botão com ícone de upload */
+.po-icon-upload {
+    margin-right: 8px;
+}

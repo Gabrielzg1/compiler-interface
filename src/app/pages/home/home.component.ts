@@ -72,4 +72,18 @@ export class HomeComponent {
     this.editorContent = event;
     localStorage.setItem('savedEditorContent', this.editorContent);
   }
+
+  fileContent: string = '';
+
+  onFileSelected(event: any): void {
+    const file: File = event.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.editorContent = e.target.result; // Armazena o conteúdo do arquivo na variável
+      };
+      reader.readAsText(file); // Lê o conteúdo do arquivo como texto
+    }
+  }
 }
