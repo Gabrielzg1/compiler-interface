@@ -15,8 +15,11 @@
     align-items: flex-start;
 }
 
-.right-section po-button {
-    margin-bottom: 10px;
+.buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    /* Espaçamento entre os botões */
 }
 
 .terminal {
@@ -30,4 +33,19 @@
     border-radius: 5px;
     resize: none;
     box-sizing: border-box;
+}
+
+/* Esconda o input original */
+input[type="file"] {
+    display: none;
+}
+
+/* Estilo do botão de upload */
+.file-upload-label {
+    cursor: pointer;
+}
+
+/* Po botão com ícone de upload */
+.po-icon-upload {
+    margin-right: 8px;
 }

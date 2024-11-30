@@ -1,12 +1,34 @@
-<div class="wrapper">
-    <div class="editor">
-        <po-code-editor p-height="750" p-theme="vs-dark" [(ngModel)]="editorContent"
-            (p-change)="onEditorChange($event)">
-        </po-code-editor>
+<po-page-default p-title="LPD">
+
+    <div class="wrapper">
+        <div class="editor">
+            <po-code-editor p-height="750" p-theme="vs-dark" [(ngModel)]="editorContent"
+                (p-change)="onEditorChange($event)">
+            </po-code-editor>
+        </div>
+        <div class="right-section">
+            <div class="buttons">
+                <po-button p-label="Executar" (p-click)="onClick()"> </po-button>
+                <!-- Adicione o input de arquivo -->
+                <!-- Adicione o botão de upload de arquivo estilizado -->
+                <div class="file-upload">
+                    <label for="fileInput" class="file-upload-label">
+                        <po-button p-label="Carregar Arquivo" icon="po-icon-upload"
+                            (p-click)="fileInput.click()"></po-button>
+                    </label>
+                    <input type="file" id="fileInput" #fileInput (change)="onFileSelected($event)" accept=".txt"
+                        hidden />
+                </div>
+
+
+                <po-button p-label="Ir para Máquina Virtual" (p-click)="toVm()" [p-disabled]="vmDisabled">
+                </po-button>
+
+            </div>
+
+            <label>Saída:</label>
+            <textarea class="terminal" [(ngModel)]="outputContent" rows="20" readonly></textarea>
+        </div>
     </div>
-    <div class="right-section">
-        <po-button p-label="Executar" (p-click)="onClick()"> </po-button>
-        <label>Saída:</label>
-        <textarea class="terminal" [(ngModel)]="outputContent" rows="20" readonly></textarea>
-    </div>
-</div>
+</po-page-default>
+<po-loading-overlay [p-screen-lock]="true" p-text="Compilando" p-size="xl" [hidden]="!isLoading">

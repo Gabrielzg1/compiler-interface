@@ -1,0 +1,97 @@
+.main-container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    /* Ajuste conforme necessário */
+    margin: 30px auto;
+}
+
+.table-container {
+    flex: 1;
+    margin: 0 10px;
+    text-align: center;
+}
+
+.output-container {
+    max-width: 300px;
+
+    /* Defina uma largura máxima para a saída */
+    flex: 0.8;
+    /* Ajuste o valor para controlar a largura relativa da seção de Saída */
+    margin-left: 10px;
+}
+
+.output-content {
+    max-height: 200px;
+    min-height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    text-align: left;
+}
+
+.scroll-container {
+    min-height: 700px;
+    max-height: 700px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.custom-table th,
+.custom-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.custom-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.highlight {
+    background-color: #ffddff;
+}
+
+.highlight-stack {
+    background-color: #ddffdd;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.back-button-container {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+
+.terminal {
+    width: 100%;
+    height: 89%;
+    background-color: #1e1e1e;
+    color: #00ff00;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: medium;
+    margin-top: 32px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    resize: none;
+    box-sizing: border-box;
+}
